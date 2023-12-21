@@ -1,0 +1,13 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: "{jobName}"
+spec:
+  template:
+    spec:
+      containers:
+      - name: busybox-wait
+        image: busybox:1.28
+        command: ["/bin/sh", "-c", "sleep {sleepTime}"]
+      restartPolicy: Never
+  backoffLimit: 4
