@@ -4,6 +4,7 @@ using KubePlayground.Services;
 using System.IO;
 
 var builder = WebApplication.CreateBuilder(args);
+
 DotEnv.Load();
 builder.Services.AddSingleton<KubernetesService>();
 builder.Services.Configure<HostOptions>(option =>

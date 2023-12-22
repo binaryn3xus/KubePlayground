@@ -5,3 +5,5 @@ global using k8s.KubeConfigModels;
 global using System.Text;
 global using YamlDotNet.Serialization;
 global using KubePlayground.Extensions;
+global using Microsoft.Extensions.DependencyInjection;
+global using Microsoft.Extensions.Hosting;
