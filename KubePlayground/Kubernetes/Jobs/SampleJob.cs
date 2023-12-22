@@ -25,8 +25,7 @@ namespace KubePlayground.Kubernetes.Jobs
                         {
                             Containers = new List<V1Container>
                             {
-                                new V1Container
-                                {
+                                new() {
                                     Name = "busy-box",
                                     Image = "busybox:1.28",
                                     Command = new List<string> { "/bin/sh", "-c" },

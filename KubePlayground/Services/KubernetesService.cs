@@ -3,15 +3,9 @@ using k8s.Models;
 
 namespace KubePlayground.Services
 {
-    public class KubernetesService
+    public class KubernetesService()
     {
-        private readonly ILogger<KubernetesService> _logger;
-        private readonly k8s.Kubernetes _kubernetesClient;
-        public KubernetesService(ILogger<KubernetesService> logger)
-        {
-            _logger = logger;
-            _kubernetesClient = KubernetesClientExtensions.BuildConfigFromEnvVariable();
-        }
+        private readonly k8s.Kubernetes _kubernetesClient = KubernetesClientExtensions.BuildConfigFromEnvVariable();
 
         public async Task<V1PodList> GetPods(string kubernetesNamespace = "default", CancellationToken cancellationToken = default)
         {
@@ -32,7 +26,7 @@ namespace KubePlayground.Services
         {
             ArgumentException.ThrowIfNullOrWhiteSpace(podName);
 
-            var response = await _kubernetesClient.CoreV1.ReadNamespacedPodLogWithHttpMessagesAsync(podName, kubernetesNamespace, follow: true);
+            var response = await _kubernetesClient.CoreV1.ReadNamespacedPodLogWithHttpMessagesAsync(podName, kubernetesNamespace, follow: true, cancellationToken: cancellationToken);
             var stream = response.Body;
             stream.CopyTo(Console.OpenStandardOutput());
         }
