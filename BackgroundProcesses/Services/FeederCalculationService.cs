@@ -17,7 +17,7 @@ public class FeederCalculationService(ILogger<FeederCalculationService> logger) 
             {
                 count++;
                 _logger.LogDebug("Feeder Calculation - Step {count}...", count);
-                Thread.Sleep(2000);
+                Thread.Sleep(5000);
             }
 
             cancellationToken.ThrowIfCancellationRequested();

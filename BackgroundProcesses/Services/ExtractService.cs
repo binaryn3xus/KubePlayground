@@ -25,7 +25,7 @@ public class ExtractService(ILogger<ExtractService> logger) : ICommandProcess<Ex
             {
                 count++;
                 _logger.LogDebug("Extracts - Step {count}...", count);
-                Thread.Sleep(2000);
+                Thread.Sleep(5000);
             }
 
             cancellationToken.ThrowIfCancellationRequested();
