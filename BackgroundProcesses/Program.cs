@@ -1,6 +1,7 @@
-﻿
+﻿Console.WriteLine("App Starting...");
 
-Console.WriteLine("App Starting...");
+// Convert all args to lower-case
+args = args.Select(arg => arg.ToLower()).ToArray();
 
 var environmentName = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") ?? "Production";
 
@@ -25,16 +26,3 @@ rootCommand.AddExtractsCommand(ServiceProvider);
 
 var invoked = await rootCommand.InvokeAsync(args);
 Console.WriteLine($"Invoked Status: {invoked}");
-
-//static IHostBuilder CreateHostBuilder(string[] args) =>
-//            Host.CreateDefaultBuilder(args)
-//                .ConfigureServices((_, services) =>
-//                    services.AddLogging(builder =>
-//                            {
-//                                var logger = new LoggerConfiguration()
-//                                            .MinimumLevel.Debug()
-//                                            .WriteTo.Console()
-//                                            .CreateLogger();
-
-//                                builder.AddSerilog(logger);
-//                            }));

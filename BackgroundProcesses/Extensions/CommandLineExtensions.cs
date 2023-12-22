@@ -10,7 +10,7 @@ public static class CommandLineExtensions
 
     public static void AddFeederCalcCommand(this RootCommand rootCommand, IServiceProvider serviceProvider)
     {
-        var fcCommand = new Command("FeederCalculation", "Interface with feeder calculations");
+        var fcCommand = new Command("feedercalculation", "Interface with feeder calculations");
 
         var consumerIdOption = new Option<int>(name: "--consumer-id", description: "Define a delay before the process starts") { IsRequired = true};
         fcCommand.Add(consumerIdOption);
@@ -28,7 +28,7 @@ public static class CommandLineExtensions
 
     public static void AddExtractsCommand(this RootCommand rootCommand, IServiceProvider serviceProvider)
     {
-        var extractCommand = new Command("Extract", "Interface with Extract Process");
+        var extractCommand = new Command("extract", "Interface with Extract Process");
 
         var isDailyOption = new Option<bool>(name: "--daily", description: "Defines if you want to start a daily extract", getDefaultValue: () => false) { IsRequired = true };
         extractCommand.Add(isDailyOption);
