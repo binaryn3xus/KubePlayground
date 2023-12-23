@@ -1,7 +1,6 @@
 using k8s.Models;
 using KubePlayground.Kubernetes.Jobs;
 using KubePlayground.Services;
-using System.IO;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -54,7 +53,7 @@ app.MapGet("/jobs", async () =>
 app.MapGet("/jobs/start/sample", async () =>
 {
     var service = app.Services.GetRequiredService<KubernetesService>();
-    var job = SampleJob.CreateJob("HelloWorld", 120);
+    var job = SampleJob.CreateJob("sample-job", 120);
     await service.DeployJob(job, "default");
 });
 app.MapGet("/logs/pod/{podName}", async (string podName, CancellationToken token) =>

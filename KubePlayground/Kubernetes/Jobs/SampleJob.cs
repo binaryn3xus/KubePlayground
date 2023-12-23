@@ -26,13 +26,10 @@ namespace KubePlayground.Kubernetes.Jobs
                             Containers = new List<V1Container>
                             {
                                 new() {
-                                    Name = "busy-box",
-                                    Image = "busybox:1.28",
-                                    Command = new List<string> { "/bin/sh", "-c" },
-                                    Args = new List<string>
-                                    {
-                                        $@"i=0; while [ $i -lt {waitTimeInSeconds} ]; do head /dev/urandom | tr -dc A-Za-z0-9 | head -c 13; echo; i=$(($i+5)); sleep 5; done"
-                                    }
+                                    Name = "feeder-calc",
+                                    Image = "ghcr.io/binaryn3xus/kubeplayground:0.0.3",
+                                    ImagePullPolicy = "IfNotPresent",
+                                    Args = new List<string>{ "FeederCalculation", "--consumer-id", "17" }
                                 }
                             },
                             TerminationGracePeriodSeconds = 60,
