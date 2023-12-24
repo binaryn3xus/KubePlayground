@@ -1,4 +1,3 @@
-﻿namespace BackgroundProcesses.Models
-{
-    public abstract class CommandOptions {}
-}
+﻿namespace BackgroundProcesses.Models;
+
+public abstract class CommandOptions {}

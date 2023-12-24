@@ -1,10 +1,14 @@
-using k8s.Models;
-using KubePlayground.Kubernetes.Jobs;
-using KubePlayground.Services;
+using Microsoft.AspNetCore.Http.HttpResults;
+using Microsoft.AspNetCore.Mvc;
+using System.Linq.Expressions;
 
 var builder = WebApplication.CreateBuilder(args);
 
 DotEnv.Load();
+builder.Services.AddControllersWithViews();
+//builder.Services.AddAuthorization(); // using any auth? Nope.
+builder.Services.AddSignalR();
+builder.Services.AddSingleton<IKubernetes>(KubernetesClientExtensions.BuildConfigFromEnvVariable());
 builder.Services.AddSingleton<KubernetesService>();
 builder.Services.Configure<HostOptions>(option =>
 {
@@ -13,54 +17,67 @@ builder.Services.Configure<HostOptions>(option =>
 
 var app = builder.Build();
 
-app.MapGet("/", () => "Hello World!");
-app.MapGet("/pods", async () =>
+//app.MapGet("/", () => "Hello World!");
+app.MapGet("/k8s/pods", async () =>
 {
     var service = app.Services.GetRequiredService<KubernetesService>();
     var list = await service.GetPods("default");
-    StringBuilder sbPods = new();
-    if (list.Items.Count > 0)
-    {
-        foreach (var item in list)
-        {
-            sbPods.AppendLine(item.Name());
-        }
-    }
-    else
-    {
-        sbPods.AppendLine("No Pods Found");
-    }
-    return sbPods.ToString();
+    var podList = list.Items.Select(pod => pod.Metadata.Name).ToList();
+    return Results.Ok(podList);
 });
-app.MapGet("/jobs", async () =>
+app.MapGet("/k8s/jobs", async () =>
 {
     var service = app.Services.GetRequiredService<KubernetesService>();
     var list = await service.GetJobs("default");
-    StringBuilder sbPods = new();
-    if (list.Items.Count > 0)
-    {
-        foreach (var item in list)
-        {
-            sbPods.AppendLine(item.Name());
-        }
-    }
-    else
-    {
-        sbPods.AppendLine("No Jobs Found");
-    }
-    return sbPods.ToString();
+    var jobList = list.Items.Select(pod => pod.Metadata.Name).ToList();
+    return Results.Ok(jobList);
 });
-app.MapGet("/jobs/start/sample", async () =>
+app.MapGet("/k8s/jobs/start/sample", async () =>
 {
     var service = app.Services.GetRequiredService<KubernetesService>();
-    var job = SampleJob.CreateJob("sample-job", 120);
+    string[] args = ["FeederCalculation", "--consumer-id", "17"];
+    var job = SampleBackgroundCliProcess.CreateJob("FeederCalc", "default",  args);
     await service.DeployJob(job, "default");
 });
-app.MapGet("/logs/pod/{podName}", async (string podName, CancellationToken token) =>
+
+
+
+app.MapGet("/k8s/jobs/cli/{subcommand}", async ([FromRoute] string subcommand, [FromHeader(Name = "Command-Args")] string commandArgs) =>
+{
+    if (string.IsNullOrWhiteSpace(commandArgs)) {
+        return Results.BadRequest($"Header '{nameof(commandArgs)}' is missing");
+    }
+
+    try
+    {
+        var service = app.Services.GetRequiredService<KubernetesService>();
+        List<string> args = [.. commandArgs.Split(' ')];
+        args.Insert(0, subcommand);
+        var job = SampleBackgroundCliProcess.CreateJob("FeederCalc", "default", [.. args]);
+        await service.DeployJob(job, "default");
+        return Results.Ok();
+    } catch (Exception ex)
+    {
+        return Results.Problem(ex.ToString());
+    }
+});
+
+
+
+
+
+app.MapGet("/k8s/logs/pod/{podName}", async (string podName, CancellationToken token) =>
 {
     var service = app.Services.GetRequiredService<KubernetesService>();
     await service.GetPodLogs(podName, "default", cancellationToken: token);
     return Task.CompletedTask;
 });
+
+// Map the hub
+app.MapHub<KubernetesLogHub>("/kubernetesLogs");
+
+app.MapControllerRoute(
+    name: "default",
+    pattern: "{controller=Home}/{action=Index}/{id?}");
 
 app.Run();

@@ -1,0 +1,7 @@
+# For more info on HTTP files go to https://aka.ms/vs/httpfile
+
+@hostname=localhost
+@port=44390
+
+GET https://{{hostname}}:{{port}}/k8s/jobs/cli/feedercalculation
+Command-Args: --consumer-id 17

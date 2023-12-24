@@ -1,0 +1,130 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <title>Job Play</title>
+    <!-- Include SignalR library from CDN -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/6.0.1/signalr.js"></script>
+</head>
+<body>
+    <p>
+        <ul>
+            <li><a href="/home/SignalRTest">Daily Extract</a></li>
+            <li><a href="/home/SignalRTest">Hourly Extract</a></li>
+        </ul>
+    </p>
+
+    <div id="Jobs">
+        <h2>Jobs</h2>
+        <ul id="jobsList">
+        </ul>
+    </div>
+
+    <div id="Pods">
+        <h2>Pods</h2>
+        <ul id="podsList">
+        </ul>
+    </div>
+
+
+    <div id="showLogs" style="min-height: 20em; max-height: 25em; overflow: scroll;white-space: nowrap; border: solid red 1px"></div>
+
+    <script>
+
+        let signalRConnection = null;
+
+        document.addEventListener("DOMContentLoaded", function () {
+            fetch('https://localhost:44390/k8s/jobs')
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok ' + response.statusText);
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    const jobsList = document.getElementById('jobsList');
+                    data.forEach(job => {
+                        let listItem = document.createElement('li');
+                        listItem.textContent = job;
+                        listItem.setAttribute('data-jobname', job);
+                        listItem.onclick = function () {
+                            GetPodsForJob(this.getAttribute('data-jobname'));
+                        };
+                        jobsList.appendChild(listItem);
+                    });
+                })
+                .catch(error => {
+                    console.error('There was a problem with the fetch operation: ', error);
+                });
+        });
+
+        function GetPodsForJob(jobName) {
+            fetch('https://localhost:44390/k8s/pods')
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok ' + response.statusText);
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    data.forEach(pod => {
+                        const podsList = document.getElementById('podsList');
+                        if (pod.startsWith(jobName)) {
+                            let listItem = document.createElement('li');
+                            listItem.textContent = pod;
+                            listItem.setAttribute('data-podname', pod);
+                            listItem.onclick = function () {
+                                GetLogsForPod(this.getAttribute('data-podname'));
+                            };
+                            podsList.appendChild(listItem);
+                        }
+                    });
+                })
+                .catch(error => {
+                    console.error('There was a problem with the fetch operation: ', error);
+                });
+        }
+
+        function GetLogsForPod(podName) {
+            try {
+                // Check if SignalR is loaded correctly
+                if (!signalR) {
+                    throw new Error("SignalR not loaded.");
+                }
+            } catch (e) {
+                console.error(e.toString());
+                return;
+            }
+
+            if (signalRConnection && signalRConnection.state === signalR.HubConnectionState.Connected) {
+                console.log("Killing Previous SignalR connection.");
+                signalRConnection.
+                return;
+            }
+
+            // Establish connection with SignalR hub
+            signalRConnection = new signalR.HubConnectionBuilder().withUrl("/kubernetesLogs").build();
+
+            console.log("")
+            signalRConnection.on("ReceiveLog", function (line) {
+                let showLogsDiv = document.getElementById("showLogs");
+                let newLog = document.createElement("div");
+                newLog.textContent = line;
+                showLogsDiv.appendChild(newLog);
+
+                // Scroll to the bottom
+                showLogsDiv.scrollTop = showLogsDiv.scrollHeight;
+            });
+
+            signalRConnection.start().then(function () {
+                console.log("Connected to SignalR hub successfully.");
+                signalRConnection.invoke("StreamLogs", podName, "default");
+            }).catch(function (err) {
+                console.error("Error with signalR");
+                return console.error(err.toString());
+            });
+        }
+
+    </script>
+
+</body>
+</html>

@@ -1,0 +1,61 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <title>SignalR Test Page</title>
+    <!-- Include SignalR library from CDN -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/6.0.1/signalr.js"></script>
+    <script>
+        // JavaScript code to use SignalR will go here
+        document.addEventListener("DOMContentLoaded", function () {
+            try {
+                // Check if SignalR is loaded correctly
+                if (!signalR) {
+                    throw new Error("SignalR not loaded.");
+                }
+            } catch (e) {
+                console.error(e.toString());
+                return;
+            }
+
+            // Establish connection with SignalR hub
+            const connection = new signalR.HubConnectionBuilder().withUrl("/kubernetesLogs").build();
+
+            connection.on("ReceiveLog", function (line, number) {
+                let showLogsDiv = document.getElementById("showLogs");
+                let useRandomColor = document.getElementById("RandomColorToggle"); //checkbox
+                let newLog = document.createElement("div");
+
+                // Generate a random color
+                if (useRandomColor.checked) {
+                    let randomColor = "#" + Math.floor(Math.random() * 16777215).toString(16);
+                    newLog.style.color = randomColor;
+                    newLog.style.padding = "0.2em";
+                }
+
+                newLog.textContent = line;
+                showLogsDiv.appendChild(newLog);
+
+                // Scroll to the bottom
+                showLogsDiv.scrollTop = showLogsDiv.scrollHeight;
+            });
+
+            connection.start().then(function () {
+                console.log("Connected to SignalR hub successfully.");
+                connection.invoke("StreamLogs", "frigate-0", "default");
+            }).catch(function (err) {
+                console.error("Error with signalR");
+                return console.error(err.toString());
+            });
+        });
+    </script>
+</head>
+<body>
+    <h1>Welcome to SignalR Test Page</h1>
+    <p>
+        <input type="checkbox" id="RandomColorToggle" checked> Random Colors
+    </p>
+    <p>
+        <div id="showLogs" style="min-height: 20em; max-height: 35em; overflow: scroll;white-space: nowrap; border: solid red 1px"></div>
+    </p>
+</body>
+</html>

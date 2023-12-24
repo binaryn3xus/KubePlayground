@@ -3,9 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.8.34330.188
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KubePlayground", "KubePlayground\KubePlayground.csproj", "{AC705417-2DBB-403F-913F-F2E8E5D9D8C5}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "KubePlayground", "KubePlayground\KubePlayground.csproj", "{AC705417-2DBB-403F-913F-F2E8E5D9D8C5}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BackgroundProcesses", "BackgroundProcesses\BackgroundProcesses.csproj", "{181CCC2A-5ED0-4584-90EB-BDE21F9C5E5A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BackgroundProcesses", "BackgroundProcesses\BackgroundProcesses.csproj", "{181CCC2A-5ED0-4584-90EB-BDE21F9C5E5A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
