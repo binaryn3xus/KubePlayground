@@ -1,13 +1,15 @@
-using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
-using System.Linq.Expressions;
 
 var builder = WebApplication.CreateBuilder(args);
 
 DotEnv.Load();
 builder.Services.AddControllersWithViews();
-//builder.Services.AddAuthorization(); // using any auth? Nope.
+//builder.Services.AddAuthorization();
 builder.Services.AddSignalR();
+builder.Services.AddCors(p => p.AddPolicy("corsapp", builder =>
+{
+    builder.WithOrigins("*").AllowAnyMethod().AllowAnyHeader();
+}));
 builder.Services.AddSingleton<IKubernetes>(KubernetesClientExtensions.BuildConfigFromEnvVariable());
 builder.Services.AddSingleton<KubernetesService>();
 builder.Services.Configure<HostOptions>(option =>
@@ -16,6 +18,7 @@ builder.Services.Configure<HostOptions>(option =>
 });
 
 var app = builder.Build();
+app.UseCors("corsapp");
 
 //app.MapGet("/", () => "Hello World!");
 app.MapGet("/k8s/pods", async () =>
@@ -61,9 +64,6 @@ app.MapGet("/k8s/jobs/cli/{subcommand}", async ([FromRoute] string subcommand, [
         return Results.Problem(ex.ToString());
     }
 });
-
-
-
 
 
 app.MapGet("/k8s/logs/pod/{podName}", async (string podName, CancellationToken token) =>
