@@ -8,7 +8,7 @@ public class FeederCalculationCommand : Command
     private readonly Option<int> _consumerIdOption = new(name: "--consumer-id", description: "Consumer Id to use for the feeder calc") { IsRequired = true };
 
     public FeederCalculationCommand(ILogger<FeederCalculationCommand> logger, FeederCalculationService feederCalcService)
-        : base("feedercalculation", "Feeder Calulation Process")
+        : base("feedercalculation", "Feeder Calculation Process")
     {
         _logger = logger;
         _feederCalcService = feederCalcService;
@@ -25,11 +25,11 @@ public class FeederCalculationCommand : Command
             var msSqlConnection = context.ParseResult.GetValueForOption(GlobalOptions.MicrosoftSqlConnection);
             int? consumerId = context.ParseResult.GetValueForOption(_consumerIdOption);
             var token = context.GetCancellationToken();
-            // this is where the nullability game begins  :D
-            await _feederCalcService.Execute(new FeederCalcCommandOptions() { ConsumerId = consumerId, MsSqlConnection = msSqlConnection }, token);
+            var commandOptions = new FeederCalcCommandOptions() { ConsumerId = consumerId, MsSqlConnection = msSqlConnection };
+            await _feederCalcService.Execute(commandOptions, token);
         } catch (Exception ex)
         {
-            _logger.LogError(ex.ToString());
+            _logger.LogError("{Message}", ex.ToString());
         }
     }
 }

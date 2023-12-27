@@ -2,5 +2,5 @@
 
 public interface ILogHub
 {
-    Task ReceiveLog(string log);
+    Task ReceiveLog(string? log);
 }

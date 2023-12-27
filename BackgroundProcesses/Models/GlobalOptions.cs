@@ -2,7 +2,6 @@
 
 public static class GlobalOptions
 {
-    // that is field --> we need property
     public static Option<string> MicrosoftSqlConnection { get; } = new("--mssql-connection")
     {
         Description = "Connection string for Microsoft SQL Server",

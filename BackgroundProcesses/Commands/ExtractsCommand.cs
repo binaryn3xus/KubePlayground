@@ -29,7 +29,7 @@ public class ExtractsCommand : Command
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex.ToString());
+            _logger.LogError("{Message}", ex.ToString());
         }
     }
 }

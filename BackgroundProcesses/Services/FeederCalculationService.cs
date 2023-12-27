@@ -30,7 +30,7 @@ public class FeederCalculationService(ILogger<FeederCalculationService> logger) 
         catch (OperationCanceledException oce)
         {
             // log as error
-            _logger.LogInformation("{Message}", oce.Message);
+            _logger.LogWarning("{Message}", oce.Message);
         }
 
         return Task.CompletedTask;
