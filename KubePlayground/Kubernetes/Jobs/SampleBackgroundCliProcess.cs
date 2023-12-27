@@ -6,13 +6,14 @@ public static class SampleBackgroundCliProcess
     {
         ArgumentNullException.ThrowIfNull(name);
 
-        return new V1Job()
+        return new V1Job
         {
             ApiVersion = "batch/v1",
             Kind = "Job",
             Metadata = new V1ObjectMeta
             {
-                Name = name.ToLower() ?? nameof(SampleBackgroundCliProcess).ToLower(),
+                // both is same
+                Name = name.ToLower(),
                 NamespaceProperty = @namespace,
             },
             Spec = new V1JobSpec

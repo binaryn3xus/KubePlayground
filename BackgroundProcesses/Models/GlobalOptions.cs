@@ -2,13 +2,14 @@
 
 public static class GlobalOptions
 {
-    public static readonly Option<string> MicrosoftSqlConnection = new("--mssql-connection")
+    // that is field --> we need property
+    public static Option<string> MicrosoftSqlConnection { get; } = new("--mssql-connection")
     {
         Description = "Connection string for Microsoft SQL Server",
         IsRequired = false,
     };
 
-    public static readonly Option<string> Db2Connection = new("--db2-connection")
+    public static Option<string> Db2Connection { get; } = new("--db2-connection")
     {
         Description = "Connection string for Microsoft SQL Server",
         IsRequired = false,
