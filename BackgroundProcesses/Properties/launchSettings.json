@@ -3,7 +3,7 @@
     "BackgroundProcesses": {
       "commandName": "Project",
       //"commandLineArgs": "feedercalculation --consumer-id 17 --mssql-connection \"datasource=hello-world;tree=1;merry-christmas\""
-      "commandLineArgs": "extracts --daily"
+      "commandLineArgs": "extracts --daily --mssql-connection \"datasource=hello-world;tree=1;merry-christmas\""
     },
     "Docker": {
       "commandName": "Docker"
