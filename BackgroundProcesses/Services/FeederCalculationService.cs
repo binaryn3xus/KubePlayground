@@ -10,6 +10,7 @@ public class FeederCalculationService(ILogger<FeederCalculationService> logger) 
         {
             _logger.LogInformation("Feeder Calculation Parameters:");
             _logger.LogInformation("Consumer Id = {ConsumerId}", options.ConsumerId);
+            _logger.LogInformation("Connection String = {ConnectionString}", options.MsSqlConnection);
             _logger.LogInformation("Starting Feeder Calculation with Consumer Id of {ConsumerId}", options.ConsumerId);
 
             int count = 0;

@@ -1,11 +1,9 @@
-﻿Console.WriteLine("App Starting...");
+﻿using BackgroundProcesses.Commands;
+
+Console.WriteLine("App Starting...");
 
 // Convert all args to lower-case
 args = args.Select(arg => arg.ToLower()).ToArray();
-
-var environmentName = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") ?? "Production";
-
-Console.WriteLine(environmentName);
 
 var configuration = new ConfigurationBuilder().SetBasePath(Directory.GetCurrentDirectory()).Build();
 var services = new ServiceCollection();
@@ -17,12 +15,17 @@ services.AddLogging(builder =>
 services.AddSingleton<FeederCalculationService>();
 services.AddSingleton<ExtractService>();
 
+services.AddSingleton<FeederCalculationCommand>();
+services.AddSingleton<ExtractsCommand>();
+
 using var ServiceProvider = services.BuildServiceProvider();
 
 //Define commands / subcommands
-var rootCommand = new RootCommand("Background Process Application");
-rootCommand.AddFeederCalcCommand(ServiceProvider);
-rootCommand.AddExtractsCommand(ServiceProvider);
+var rootCommand = new RootCommand("Background Process Application").AddGlobalOptions();
+rootCommand.AddCommand(ServiceProvider.GetRequiredService<FeederCalculationCommand>());
+rootCommand.AddCommand(ServiceProvider.GetRequiredService<ExtractsCommand>());
+//rootCommand.AddFeederCalcCommand();
+//rootCommand.AddExtractsCommand(ServiceProvider);
 
 var invoked = await rootCommand.InvokeAsync(args);
 Console.WriteLine($"Invoked Status: {invoked}");

@@ -11,6 +11,7 @@ public class ExtractService(ILogger<ExtractService> logger) : ICommandProcess<Ex
             _logger.LogInformation("Extracts Parameters:");
             _logger.LogInformation("Daily = {IsDaily}", options.IsDaily);
             _logger.LogInformation("Hourly = {IsHourly}", options.IsHourly);
+            _logger.LogInformation("Connection String = {ConnectionString}", options.MsSqlConnection);
 
             if (!options.IsDaily && !options.IsHourly)
             {
