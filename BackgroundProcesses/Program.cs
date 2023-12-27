@@ -1,31 +1,51 @@
 ﻿using BackgroundProcesses.Commands;
 
-Console.WriteLine("App Starting...");
-
-// Convert all args to lower-case
-args = args.Select(arg => arg.ToLower()).ToArray();
-
-var configuration = new ConfigurationBuilder().SetBasePath(Directory.GetCurrentDirectory()).Build();
-var services = new ServiceCollection();
-services.AddLogging(builder =>
+// just an experiment, don't take it into consideration
+class Program
 {
-    var logger = new LoggerConfiguration().MinimumLevel.Debug().WriteTo.Console().CreateLogger();
-    builder.AddSerilog(logger);
-});
-services.AddSingleton<FeederCalculationService>();
-services.AddSingleton<ExtractService>();
+    static async Task Main(string[] args)
+    {
+        Console.WriteLine("App Starting...");
 
-services.AddSingleton<FeederCalculationCommand>();
-services.AddSingleton<ExtractsCommand>();
+        // Convert all args to lower-case
+        args = args.Select(arg => arg.ToLower()).ToArray();
 
-using var ServiceProvider = services.BuildServiceProvider();
+        var services = new ServiceCollection();
+        ConfigureServices(services);
 
-//Define commands / subcommands
-var rootCommand = new RootCommand("Background Process Application").AddGlobalOptions();
-rootCommand.AddCommand(ServiceProvider.GetRequiredService<FeederCalculationCommand>());
-rootCommand.AddCommand(ServiceProvider.GetRequiredService<ExtractsCommand>());
-//rootCommand.AddFeederCalcCommand();
-//rootCommand.AddExtractsCommand(ServiceProvider);
+        await using var serviceProvider = services.BuildServiceProvider();
 
-var invoked = await rootCommand.InvokeAsync(args);
-Console.WriteLine($"Invoked Status: {invoked}");
+        // Define commands / sub-commands
+        var rootCommand = new RootCommand("Background Process Application")
+            .AddGlobalOptions();
+
+        ConfigureCommands(rootCommand, serviceProvider);
+
+        var invoked = await rootCommand.InvokeAsync(args);
+        Console.WriteLine($"Invoked Status: {invoked}");
+    }
+
+    private static void ConfigureServices(IServiceCollection services)
+    {
+        var logger = new LoggerConfiguration()
+            .MinimumLevel
+            .Debug()
+            .WriteTo
+            .Console()
+            .CreateLogger();
+
+        services.AddLogging(builder => builder.AddSerilog(logger));
+
+        services.AddSingleton<FeederCalculationService>();
+        services.AddSingleton<ExtractService>();
+
+        services.AddSingleton<FeederCalculationCommand>();
+        services.AddSingleton<ExtractsCommand>();
+    }
+
+    private static void ConfigureCommands(RootCommand rootCommand, ServiceProvider serviceProvider)
+    {
+        rootCommand.AddCommand(serviceProvider.GetRequiredService<FeederCalculationCommand>());
+        rootCommand.AddCommand(serviceProvider.GetRequiredService<ExtractsCommand>());
+    }
+}

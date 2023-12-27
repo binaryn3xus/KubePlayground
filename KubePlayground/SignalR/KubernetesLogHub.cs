@@ -26,13 +26,7 @@ public class KubernetesLogHub : Hub<ILogHub>
         // Subscribe to the observable and send each line to the client
         await lines.ForEachAsync(line =>
         {
-            var random = new Random();
-            Clients.Caller.ReceiveLog(line);
+            _ = Clients.Caller.ReceiveLog(line);
         });
     }
-}
-
-public interface ILogHub
-{
-    Task ReceiveLog(string log);
 }

@@ -6,6 +6,8 @@ public class FeederCalculationService(ILogger<FeederCalculationService> logger) 
 
     public Task Execute(FeederCalcCommandOptions options, CancellationToken cancellationToken)
     {
+        // where do we use options here?
+        // is it taken into consideration that options can have everything nullable?
         try
         {
             _logger.LogInformation("Feeder Calculation Parameters:");
@@ -18,6 +20,7 @@ public class FeederCalculationService(ILogger<FeederCalculationService> logger) 
             {
                 count++;
                 _logger.LogDebug("Feeder Calculation - Step {count}...", count);
+                // thread.sleep is evil
                 Thread.Sleep(5000);
             }
 
@@ -26,6 +29,7 @@ public class FeederCalculationService(ILogger<FeederCalculationService> logger) 
         }
         catch (OperationCanceledException oce)
         {
+            // log as error
             _logger.LogInformation("{Message}", oce.Message);
         }
 
