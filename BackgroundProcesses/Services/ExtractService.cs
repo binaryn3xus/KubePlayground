@@ -34,6 +34,7 @@ public class ExtractService(ILogger<ExtractService> logger) : ICommandProcess<Ex
         }
         catch (OperationCanceledException oce)
         {
+            // log ass error
             _logger.LogInformation("{Message}", oce.Message);
         }
 
