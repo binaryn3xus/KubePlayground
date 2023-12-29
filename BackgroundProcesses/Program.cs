@@ -1,16 +1,12 @@
-﻿Console.WriteLine("App Starting...");
-
-// Convert all args to lower-case
+﻿// Convert all args to lower-case
 args = args.Select(arg => arg.ToLower()).ToArray();
 
-var configuration = new ConfigurationBuilder().SetBasePath(Directory.GetCurrentDirectory()).Build();
 var services = new ServiceCollection();
 services.AddLogging(builder =>
 {
     var logger = new LoggerConfiguration().MinimumLevel.Debug().WriteTo.Console().CreateLogger();
     builder.AddSerilog(logger);
 });
-
 
 // Define Services
 services.AddSingleton<FeederCalculationService>();

@@ -14,15 +14,27 @@ public static class GlobalOptions
         IsRequired = false,
     };
 
-    public static Option[] GetGlobalOptions() => new Option[] { MicrosoftSqlConnection, Db2Connection };
+    public static Option?[] GetGlobalOptions()
+    {
+        return typeof(GlobalOptions)
+            .GetFields(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.Instance)
+            .Where(field => typeof(Option).IsAssignableFrom(field.FieldType))
+            .Select(field => field.GetValue(null) as Option)
+            .ToArray();
+    }
 
     public static RootCommand AddGlobalOptions(this RootCommand command)
     {
         var options = GetGlobalOptions();
-        foreach (var option in options)
+
+        if (options != null)
         {
-            command.AddGlobalOption(option);
+            foreach (var option in options)
+            {
+                command.AddGlobalOption(option);
+            }
         }
+
         return command;
     }
 }

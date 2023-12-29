@@ -4,35 +4,29 @@ public class FeederCalculationService(ILogger<FeederCalculationService> logger) 
 {
     private readonly Microsoft.Extensions.Logging.ILogger _logger = logger;
 
-    public Task Execute(FeederCalcCommandOptions options, CancellationToken cancellationToken)
+    public async Task Execute(FeederCalcCommandOptions options, CancellationToken cancellationToken)
     {
-        // where do we use options here?
-        // is it taken into consideration that options can have everything nullable?
         try
         {
-            _logger.LogInformation("Feeder Calculation Parameters:");
-            _logger.LogInformation("Consumer Id = {ConsumerId}", options.ConsumerId);
-            _logger.LogInformation("Connection String = {ConnectionString}", options.MsSqlConnection);
-            _logger.LogInformation("Starting Feeder Calculation with Consumer Id of {ConsumerId}", options.ConsumerId);
-
-            int count = 0;
-            while (count <= 20 & !cancellationToken.IsCancellationRequested)
-            {
-                count++;
-                _logger.LogDebug("Feeder Calculation - Step {count}...", count);
-                // thread.sleep is evil
-                Thread.Sleep(5000);
-            }
-
+            options.LogProperties(_logger);
+            await CountToNumberAsync(20, cancellationToken).ConfigureAwait(false);
             cancellationToken.ThrowIfCancellationRequested();
             _logger.LogInformation("Feeder Calculation Complete...");
         }
         catch (OperationCanceledException oce)
         {
-            // log as error
             _logger.LogWarning("{Message}", oce.Message);
         }
+    }
 
-        return Task.CompletedTask;
+    public async Task CountToNumberAsync(int number, CancellationToken cancellationToken)
+    {
+        int count = 0;
+        while (count < number & !cancellationToken.IsCancellationRequested)
+        {
+            count++;
+            _logger.LogDebug("Step {count}...", count);
+            await Task.Delay(2000, cancellationToken).ConfigureAwait(false);
+        }
     }
 }

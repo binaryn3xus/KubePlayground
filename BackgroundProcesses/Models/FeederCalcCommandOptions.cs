@@ -2,5 +2,5 @@
 
 public class FeederCalcCommandOptions : CommandOptions
 {
-    public int? ConsumerId { get; }
+    public int? ConsumerId { get; set; }
 }

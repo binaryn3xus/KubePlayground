@@ -1,9 +1,9 @@
 {
   "profiles": {
     "BackgroundProcesses": {
-      "commandName": "Project",
-      //"commandLineArgs": "feedercalculation --consumer-id 17 --mssql-connection \"datasource=hello-world;tree=1;merry-christmas\""
-      "commandLineArgs": "extracts --daily --mssql-connection \"datasource=hello-world;tree=1;merry-christmas\""
+        "commandName": "Project",
+        //"commandLineArgs": "feedercalculation --consumer-id 17 --mssql-connection \"Server=myServerName,myPortNumber;Database=myDataBase;User Id=myUsername;Password=myPassword;\" --db2-connection \"Server=myAddress:myPortNumber;Database=myDataBase;UID=myUsername;PWD=myPassword;\""
+        "commandLineArgs": "extracts --daily --mssql-connection \"datasource=hello-world;tree=1;merry-christmas\""
     },
     "Docker": {
       "commandName": "Docker"

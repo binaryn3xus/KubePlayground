@@ -23,8 +23,9 @@ public class ExtractsCommand : Command
         {
             bool isDaily = context.ParseResult.GetValueForOption(_isDailyOption);
             bool isHourly = context.ParseResult.GetValueForOption(_isHourlyOption);
+            var msSqlConnection = context.ParseResult.GetValueForOption(GlobalOptions.MicrosoftSqlConnection);
             var token = context.GetCancellationToken();
-            var commandOptions = new ExtractCommandOptions { IsDaily = isDaily, IsHourly = isHourly };
+            var commandOptions = new ExtractCommandOptions { IsDaily = isDaily, IsHourly = isHourly, MsSqlConnection = msSqlConnection };
             await _extractService.Execute(commandOptions, token);
         }
         catch (Exception ex)

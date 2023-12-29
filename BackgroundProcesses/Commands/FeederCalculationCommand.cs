@@ -23,6 +23,7 @@ public class FeederCalculationCommand : Command
         try
         {
             var msSqlConnection = context.ParseResult.GetValueForOption(GlobalOptions.MicrosoftSqlConnection);
+            var db2Connection = context.ParseResult.GetValueForOption(GlobalOptions.Db2Connection);
             int? consumerId = context.ParseResult.GetValueForOption(_consumerIdOption);
             var token = context.GetCancellationToken();
             var commandOptions = new FeederCalcCommandOptions() { ConsumerId = consumerId, MsSqlConnection = msSqlConnection };
