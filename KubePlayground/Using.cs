@@ -1,4 +1,6 @@
-﻿global using dotenv.net;
+﻿global using System.Reactive.Linq;
+global using System.Text;
+global using dotenv.net;
 global using k8s;
 global using k8s.KubeConfigModels;
 global using k8s.Models;
@@ -6,7 +8,6 @@ global using KubePlayground.Extensions;
 global using KubePlayground.Kubernetes.Jobs;
 global using KubePlayground.Services;
 global using KubePlayground.SignalR;
-global using Microsoft.Extensions.DependencyInjection;
-global using Microsoft.Extensions.Hosting;
-global using System.Text;
+global using KubePlayground.SignalR.Interfaces;
+global using Microsoft.AspNetCore.SignalR;
 global using YamlDotNet.Serialization;

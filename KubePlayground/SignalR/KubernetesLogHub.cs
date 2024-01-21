@@ -1,9 +1,6 @@
-﻿using Microsoft.AspNetCore.SignalR;
-using System.Reactive.Linq;
+﻿namespace KubePlayground.SignalR;
 
-namespace KubePlayground.SignalR;
-
-public class KubernetesLogHub : Hub<ILogHub>
+public class KubernetesLogHub : Hub<IKubernetesLogHub>
 {
     private readonly IKubernetes _kubernetesClient;
 
